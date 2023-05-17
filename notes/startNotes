@@ -1,3 +1,5 @@
 commands:
 npm install
 npm start
+
+https://glebbahmutov.com/cypress-examples/#traversal - a lot of Cypress examples

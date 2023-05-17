@@ -1,84 +1,86 @@
-/*
-in terminal 1: npm start (to start the local site)
-in termonal 2: npx cypress open (to open cypress)
-*/
+///<reference types="cypress"/>
 
-describe('implicit assertions', () => {
-  it('passes', () => {
+//with implicit assertion it's possible to make a lot of checks
+//even for element that appeared for short period (e.g. message, pop-up, etc.)
+//explicit assertions don't work in this case 
+
+it('Implicit assertions', () => {
     cy.visit('http://localhost:8080/commands/assertions');
 
-    cy.get('.table.table-bordered.assertion-table tr')
-    .eq(3) //it's a cypress command that search for the defined number of elements
-    .should('have.class','success');
+    expect('Assertions').to.be.eq('Assertions');
 
     cy.get('.table.table-bordered.assertion-table tr')
-    .eq(3)
-    .should('have.attr','class');
+    .eq(3).then(element =>{  
+        expect(element).to.have.class('success');
+        expect(element).to.have.attr('class');
+
+        expect(element.attr('class')).to.eq('success');
+        expect(element.attr('class')).to.eql('success');//deeply equal 
+        expect(element.attr('class')).to.eqls('success');//deeply equal 
+        expect(element.attr('class')).to.equal('success');
+        expect(element.attr('class')).to.equals('success');
+    })
+
+    const obj1 ={
+        key: 'Lili',
+        keyObj:{
+            key2: '1'
+        }
+    }
+
+    const obj2 ={
+        key: 'Lili',
+        keyObj:{
+            key2: '1'
+        }   
+    }
+
+    //expect(obj1).to.eq(obj2); //will fail
+    expect(obj1).to.eql(obj2);//deeply equal works as they check as a text inside of the each object
+    expect(obj1).to.eqls(obj2);//deeply equal works as they check as a text inside of the each object
+    //expect(obj1).to.equal(obj2); //will fail
+    //expect(obj1).to.equals(obj2); //will fail
+
+    const obj3 = obj1;
+    expect(obj3).to.eq(obj1); 
+    expect(obj3).to.eql(obj1);//deeply equal 
+    expect(obj3).to.eqls(obj1);//deeply equal 
+    expect(obj3).to.equal(obj1); 
+    expect(obj3).to.equals(obj1); 
 
     cy.get('.table.table-bordered.assertion-table tr td')
     .eq(3)
-    .should('have.text','Column content');
+    .then(element =>{
+        expect(element).to.have.text('Column content');
+        expect(element).to.have.html('Column content');
+        expect(element).to.have.text('Column content');
 
-    cy.get('.table.table-bordered.assertion-table tr td')
-    .eq(5)
-    .should('have.html','Column content');
-
-    cy.get('.table.table-bordered.assertion-table tr td')
-    .eq(3)
-    .should('contain','Column content');
-
-    cy.get('.table.table-bordered.assertion-table tr td')
-    .eq(5)
-    .should('not.contain','Hello');
-
-    cy.get('.table.table-bordered.assertion-table tr td')
-    .eq(5)
-    .should('include.text','content');
-
-    cy.get('.table.table-bordered.assertion-table tr th')
-    .eq(5)
-    .should('contain','3');
-
-    cy.get('.table.table-bordered.assertion-table tr th')
-    .eq(5)
-    .invoke('text')
-    .then(parseFloat)
-    .should('be.greaterThan', 2); //to get all that in styles
-
-
+        expect(element.text()).to.contain('Column content');
+        expect(element.text()).to.contains('content');
+        expect(element.text()).not.to.contains('text');
+        expect(element.text()).to.be.empty;
+    })
 
     cy.visit('http://localhost:8080/commands/querying');
 
     cy.get('#inputName')
-    .type('Lili')
-    .should('have.value','Lili');
-
-    cy.get('#query-btn')
-    .should('be.enabled');
-
-    cy.get('#main')
-    .should('be.enabled');
+    .type('Didi')
+    .then(element =>{
+        expect(element.val()).to.be.eq('Didi');
+    })
 
     cy.visit('http://localhost:8080/commands/traversal');
     cy.get('.traversal-disabled .btn.btn-default')
     .eq(0)
-    .should('be.disabled');
+    .then(element =>{
+        expect(element).to.be.disabled;
+    })
 
+    cy.visit('http://localhost:8080/commands/traversal');
     cy.get('.traversal-disabled .btn.btn-default')
     .eq(1)
-    .should('be.enabled');
+    .then(element =>{
+        expect(element).to.be.enabled;
+    })
 
-    //check link
-    cy.visit('http://localhost:8080/commands/querying');
-    cy.get('.nav.navbar-nav.pull-right li a')
-    .should('have.attr', 'href');
-
-    //check css
-    cy.get('#query-btn')
-    .should('have.css','background-color') // checking the background-color - from styles in console
-    .and('eq','rgb(51, 122, 183)'); // take hex from console (e.g. #286090) and onvert to rgb (in google search 'hex-to-rgb')
-    
-   
-
-  })
 })
