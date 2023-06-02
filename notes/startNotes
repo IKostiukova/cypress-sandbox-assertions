@@ -1,5 +1,7 @@
 commands:
 npm install
-npm start
+npm start - start the local site
+
+npx cypress open - start cypress
 
 https://glebbahmutov.com/cypress-examples/#traversal - a lot of Cypress examples
